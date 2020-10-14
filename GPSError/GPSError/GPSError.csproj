@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GDAL" Version="2.4.4" />
+    <PackageReference Include="Gdal.Core" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="SharpGPX">
+      <HintPath>..\Assemblies\SharpGPX.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

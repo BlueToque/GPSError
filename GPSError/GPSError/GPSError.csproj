@@ -7,14 +7,36 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GDAL" Version="2.4.4" />
-    <PackageReference Include="Gdal.Core" Version="1.0.0" />
+    <Compile Remove="GDAL\Data.Generated.cs" />
+    <Compile Remove="GDAL\Extents.cs" />
+    <Compile Remove="GDAL\GDALException.cs" />
+    <Compile Remove="GDAL\GDALImage.cs" />
+    <Compile Remove="GDAL\GeoTransform.cs" />
+    <Compile Remove="GDAL\ImageCalc.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="SharpGPX">
-      <HintPath>..\Assemblies\SharpGPX.dll</HintPath>
-    </Reference>
+    <None Remove="GDAL\Data.Generated.xml" />
+    <None Remove="GDAL\Data.xsd" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BlueToque.SharpGPX" Version="2.20.1015" />
+    <PackageReference Include="GDAL" Version="2.4.4" />
+    <PackageReference Include="Gdal.Core" Version="1.0.0" />
+    <PackageReference Include="GDAL.Native" Version="2.4.4" />
+    <PackageReference Include="SharpKml.Core" Version="5.1.3" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+    <PackageReference Include="System.Windows.Forms.DataVisualization" Version="1.0.0-prerelease.20110.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="TestData\20200927-132348.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\Track_A020-09-27 145720.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

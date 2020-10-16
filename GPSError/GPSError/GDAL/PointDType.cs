@@ -5,59 +5,23 @@ using System.Xml.Serialization;
 
 namespace GPSError.GDAL
 {
-    /// <summary>
-    /// 
-    /// </summary>
     [TypeConverter(typeof(ExpandableObjectConverter))]
     [System.Diagnostics.DebuggerDisplay("({X}, {Y}, {Z})")]
     public partial class PointDType :
         ICloneable,
-        //IPointD,
-        //IPoint<double>,
         IEquatable<PointDType>,
         IComparable,
         IComparable<PointDType>
     {
         #region constructors
 
-        /// <summary> </summary>
         public PointDType() : this(0, 0, 0) { }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
         public PointDType(double x, double y, double z = 0) { X = x; Y = y; Z = z; }
 
-        public double X;
-        public double Y;
-        public double Z;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="point"></param>
         public PointDType(PointDType point) { X = point.X; Y = point.Y; Z = point.Z; }
 
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <param name="point"></param>
-        //public PointDType(IPointD point) : this(point.X, point.Y, point.Z) { }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="point"></param>
         public PointDType(PointF point) { X = point.X; Y = point.Y; }
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <param name="point"></param>
-        //public PointDType(IPointF point) { X = point.X; Y = point.Y; Z = point.Z; }
 
         /// <summary>
         /// Create a point from an array of double of length three
@@ -83,25 +47,16 @@ namespace GPSError.GDAL
             }
         }
 
+        public double X;
+        public double Y;
+        public double Z;
+
         #endregion
 
         /// <summary>
         /// return true if this is an empty point
         /// </summary>
         public bool IsEmpty => this == Empty;
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <returns></returns>
-        //public PointType Round() => new PointType((int)Math.Round(X), (int)Math.Round(Y));
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <param name="point"></param>
-        ///// <returns></returns>
-        //public static PointDType FromPointF(PointF point) => new PointDType(point);
 
         /// <summary>
         /// return the point structire in array format
@@ -135,12 +90,6 @@ namespace GPSError.GDAL
         /// <summary> </summary>
         public static PointDType Empty => m_empty;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
-        /// <returns></returns>
         public static bool Equals(PointDType left, PointDType right)
         {
             if (((object)left) == ((object)right))
@@ -188,32 +137,16 @@ namespace GPSError.GDAL
             }
         }
 
-        ///// <summary>
-        ///// implicit operator converting from Point to PointType
-        ///// </summary>
-        ///// <param name="point"></param>
-        ///// <returns></returns>
-        //public static implicit operator PointDType(PointF point)
-        //{
-        //    if (point == null) throw new ArgumentNullException("point");
-        //    return new PointDType(point);
-        //}
-
-        ///// <summary>
-        ///// implicit operator converting from PointFType to PointDType
-        ///// </summary>
-        ///// <param name="point"></param>
-        ///// <returns></returns>
-        //public static implicit operator PointDType(PointFType point)
-        //{
-        //    if (point == null) throw new ArgumentNullException("point");
-        //    return new PointDType()
-        //    {
-        //        X = point.X,
-        //        Y = point.Y,
-        //        Z = point.Z
-        //    };
-        //}
+        /// <summary>
+        /// implicit operator converting from Point to PointType
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public static implicit operator PointDType(PointF point)
+        {
+            if (point == null) throw new ArgumentNullException("point");
+            return new PointDType(point);
+        }
 
         /// <summary>
         /// implicit operator converting from PointType to Point
@@ -225,17 +158,6 @@ namespace GPSError.GDAL
             if (point == null) throw new ArgumentNullException("point");
             return new PointF((float)point.X, (float)point.Y);
         }
-
-        ///// <summary>
-        ///// implicit operator converting from PointType to Point
-        ///// </summary>
-        ///// <param name="point"></param>
-        ///// <returns></returns>
-        //public static explicit operator PointFType(PointDType point)
-        //{
-        //    if (point == null) throw new ArgumentNullException("point");
-        //    return new PointFType((float)point.X, (float)point.Y);
-        //}
 
         /// <summary>
         /// Vector + Vector
@@ -318,95 +240,36 @@ namespace GPSError.GDAL
             return new PointDType(-value.X, -value.Y, -value.Z);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
-        /// <returns></returns>
         public static bool operator ==(PointDType left, PointDType right) => Equals(left, right);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
-        /// <returns></returns>
         public static bool operator !=(PointDType left, PointDType right) => !Equals(left, right);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <returns></returns>
         public static bool operator <(PointDType v1, PointDType v2) => v1.SumComponentSqrs() < v2.SumComponentSqrs();
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <returns></returns>
         public static bool operator >(PointDType v1, PointDType v2) => v1.SumComponentSqrs() > v2.SumComponentSqrs();
 
         #endregion
 
         #region component operations
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="v1"></param>
-        /// <returns></returns>
         public static PointDType SqrComponents(PointDType v1) => new PointDType(v1.X * v1.X, v1.Y * v1.Y, v1.Z * v1.Z);
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void SqrComponents() => Value = SqrtComponents(this);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="v1"></param>
-        /// <returns></returns>
         public static PointDType SqrtComponents(PointDType v1) => new PointDType(Math.Sqrt(v1.X), Math.Sqrt(v1.Y), Math.Sqrt(v1.Z));
 
-        /// <summary>
-        /// 
-        /// </summary>
         public void SqrtComponents() => Value = SqrtComponents(this);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="v1"></param>
-        /// <returns></returns>
         public static double SumComponentSqrs(PointDType v1) => SqrComponents(v1).SumComponents();
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         public double SumComponentSqrs() => SumComponentSqrs(this);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="v1"></param>
-        /// <returns></returns>
         public static double SumComponents(PointDType v1) => (v1.X + v1.Y + v1.Z);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         public double SumComponents() => SumComponents(this);
 
         #endregion
 
-        /// <summary> </summary>
         [XmlIgnore]
         internal PointDType Value { get => new PointDType(Value); set { X = value.X; Y = value.Y; Z = value.Z; } }
 
@@ -414,7 +277,7 @@ namespace GPSError.GDAL
         /// Return the point structure in array format
         /// </summary>
         /// <returns></returns>
-        public double[] ToArray() => new double[3] { this.X, this.Y, this.Z };
+        public double[] ToArray() => new double[3] { X, Y, Z };
 
         #region ICloneable Members
 
@@ -441,11 +304,6 @@ namespace GPSError.GDAL
 
         #region overrides
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
         public override bool Equals(object obj)
         {
             if (obj is null) return false;
@@ -455,15 +313,11 @@ namespace GPSError.GDAL
         }
 
         /// <summary>
-        /// 
+        /// Get the hash value
         /// </summary>
         /// <returns></returns>
-        public override int GetHashCode() => (int)((X + Y + Z) % Int32.MaxValue);
+        public override int GetHashCode() => (int)((X + Y + Z) % int.MaxValue);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         public override string ToString() => string.Format("{0}, {1}, {2}", X, Y, Z);
 
         #endregion

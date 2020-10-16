@@ -11,36 +11,34 @@ namespace GPSError
 
     public static class Processor
     {
-        static GDALProjection m_projection;
+        static SphericalMercatorProjection m_projection;
 
+        /// <summary>
+        /// Process the file name
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         internal static TestData Process(string fileName)
         {
             if (m_projection == null)
-                m_projection = new GDALProjection();
+                m_projection = new SphericalMercatorProjection();
 
             TestData error = new TestData();
 
-            //Stream stream = new Storage("gpserror").DownloadToStream(device.GetFileName());
-
-            if (Path.GetExtension(fileName).ToLower() == ".gpx")
+            var ext = Path.GetExtension(fileName).ToLower();
+            if (ext == ".gpx")
                 error = ProcessGPX(fileName);
-            else if (
-                Path.GetExtension(fileName).ToLower() == ".kml" ||
-                Path.GetExtension(fileName).ToLower() == ".kmz")
+            else if ( ext == ".kml" || ext == ".kmz")
                 error = ProcessKML(fileName);
-            else
-                return null;
 
             if (error == null)
                 return null;
 
-            if (error.Entries.Count != 0)
-                error.Initialize();
+            // process the data set
+            error.Process();
 
             return error;
-
         }
-
 
         private static TestData ProcessKML(string fileName)
         {
@@ -72,34 +70,37 @@ namespace GPSError
 
         private static TestData ProcessGPX(string file) => ProcessGPX(GpxClass.FromFile(file));
 
-        private static TestData ProcessGPX(Stream fileStream) => ProcessGPX(GpxClass.FromStream(fileStream));
+        //private static TestData ProcessGPX(Stream fileStream) => ProcessGPX(GpxClass.FromStream(fileStream));
 
         private static TestData ProcessGPX(GpxClass gpx)
         {
             TestData data = new TestData();
+
+            // get all of the points in the tracks and convert them to spherical mercator
             foreach (var track in gpx.Tracks)
             {
                 foreach (var seg in track.trkseg)
                 {
                     foreach (var pt in seg.trkpt)
                     {
-                        PointDType c = pt.ToCoordinate();
-                        PointDType UTM = m_projection.Project(c);
+                        PointDType geo = pt.ToCoordinate();
+                        PointDType mercator = m_projection.Project(geo);
 
-                        if (seg.trkpt.IndexOf(pt) == 0 &&
-                            pt.timeSpecified)
+                        // the start time of the track
+                        if (seg.trkpt.IndexOf(pt) == 0 && pt.timeSpecified)
                             data.Start = pt.time;
-                        if (seg.trkpt.IndexOf(pt) == (seg.trkpt.Count - 1) &&
-                            pt.timeSpecified)
+
+                        // the end time of the track
+                        if (seg.trkpt.IndexOf(pt) == (seg.trkpt.Count - 1) && pt.timeSpecified)
                             data.End = pt.time;
 
                         data.Entries.Add(new Entry()
                         {
-                            Lat = c.Y,
-                            Lon = c.X,
-                            X = UTM.X,
-                            Y = UTM.Y,
-                            Z = c.Z
+                            Lat = geo.Y,
+                            Lon = geo.X,
+                            X = mercator.X,
+                            Y = mercator.Y,
+                            Z = geo.Z
                         });
                     }
                 }
@@ -107,9 +108,15 @@ namespace GPSError
 
             if (data.Start.HasValue && data.End.HasValue)
                 data.Duration = (float)(data.End.Value - data.Start.Value).TotalMinutes;
+
             return data;
         }
 
+        /// <summary>
+        /// Convert a waypoint to a double precision point
+        /// </summary>
+        /// <param name="wpt"></param>
+        /// <returns></returns>
         public static PointDType ToCoordinate(this wptType wpt)
         {
             PointDType c = new PointDType(
@@ -120,7 +127,6 @@ namespace GPSError
                 c.Z = Convert.ToDouble(wpt.ele);
             return c;
         }
-
 
     }
 }

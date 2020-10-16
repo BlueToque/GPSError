@@ -1,7 +1,5 @@
+using GPSError.GDAL;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GPSError
@@ -14,6 +12,8 @@ namespace GPSError
         [STAThread]
         static void Main()
         {
+            GDALHelper.ConfigureGdal();
+            GDALHelper.ConfigureOgr();
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
